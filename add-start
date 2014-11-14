@@ -1,0 +1,297 @@
+#!/usr/bin/env python
+#!/bin/bash
+# File Name: add-start
+# Dependencies: fluxbox or icewm or jwm, desktop_tool, gtk, pygtk,
+# python os mod, python re mod, python sys mod, yad
+# Version: 2.0
+# Purpose:  Add startup commands to the icewm / fluxbox / jwm startup
+# Authors: Dave
+
+# Copyright (C) Tuesday, Feb. 7, 2011  by Dave / david@daveserver.info
+# License: gplv2
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+################################################################################
+#################################################################
+import gtk
+from desktop_tool import get_icon as get_icon
+import re
+import os
+import sys
+
+USER_HOME = os.environ['HOME']
+DISPLAY = os.environ['DISPLAY']
+DISPLAY = re.sub(r':', '', DISPLAY)
+DISPLAY_SPLIT = DISPLAY.split('.')
+DISPLAY = DISPLAY_SPLIT[0]
+
+with open(USER_HOME+"/.desktop-session/desktop-code."+DISPLAY, "r") as f:
+  DESKTOP = f.readline()
+  DESKTOP = re.sub(r'\n', '', DESKTOP)
+DESKTOP = re.sub(r'.*-', '', DESKTOP)
+LOCATION=(USER_HOME+"/."+DESKTOP+"/keys")
+
+class Error:
+    def __init__(self, error):
+       cmdstring = "yad --image=\"error\"\
+       --title=\"add-start error\"\
+       --text=\"add-start has run into an error,\
+       \nplease rerun and correct the following error!\
+       \n\n%s\n\"\
+       --button=\"gtk-ok:0\"" % (error)
+       os.system(cmdstring) 
+       
+class Success:
+    def __init__(self, success):
+       cmdstring = "yad --image=\"info\"\
+       --title=\"add-start success\"\
+       --text=\"add-start has successfully completed,\
+       \n\n%s\n\"\
+       --button=\"gtk-ok:0\"" % (success)
+       os.system(cmdstring) 
+       
+       
+class Remove():
+    
+    def build_drop_box(self):
+        self.removeSelect = gtk.combo_box_new_text()
+        self.removeSelect.append_text('No line Selected:')
+    
+        for line in open(USER_HOME+"/."+DESKTOP+"/startup", "r").xreadlines():
+            if "#" not in line:
+                if re.search(r'^.*&', line):
+                    line = re.sub(r'\n', '', line)
+                    self.removeSelect.append_text(line)
+        
+        #removeSelect.connect('changed', self.changed_cb)
+        self.removeSelect.set_active(0)
+        self.selectBox.pack_start(self.removeSelect)
+        self.removeSelect.show()
+        
+    def updateRemoveSelect(self):
+        #remove select box
+        self.selectBox.remove(self.removeSelect)
+        self.removeSelect.destroy()
+        #build drop box
+        self.build_drop_box()
+    
+    
+    def apply(self,widget):
+        model = self.removeSelect.get_model()
+        index = self.removeSelect.get_active()			
+        line_to_remove = model[index][0]
+        line_to_remove = re.sub(r'\(', '\\\(', line_to_remove)
+        line_to_remove = re.sub(r'\)', '\\\)', line_to_remove)
+        print line_to_remove
+        
+        for line in open(USER_HOME+"/."+DESKTOP+"/startup", "r").xreadlines():
+            if "%s" % (line_to_remove) not in line:
+                text = file((USER_HOME+"/."+DESKTOP+"/startup.new"), "a")
+                text.write (line) 
+                text.close()
+            
+        os_system_line="mv "+USER_HOME+"/."+DESKTOP+"/startup.new "+USER_HOME+"/."+DESKTOP+"/startup && chmod 755 "+USER_HOME+"/."+DESKTOP+"/startup"
+        os.system(os_system_line)
+        Success("line has been removed")
+        self.updateRemoveSelect()
+                
+    def __init__(self):
+        
+        self.frame = gtk.Frame("Remove Items")
+        self.frame.set_border_width(10)
+        self.frame.show()
+        
+        self.vbox = gtk.VBox()
+        self.frame.add(self.vbox)
+        self.vbox.show()
+        
+        label = gtk.Label()
+        label.set_text("Line to Remove")
+        self.vbox.pack_start(label)
+        label.show()
+        
+        self.selectBox = gtk.VBox()
+        self.vbox.pack_start(self.selectBox)
+        self.selectBox.show()
+        
+        #build drop box
+        self.build_drop_box()
+        
+        self.label = gtk.Label("Remove")
+        self.label.show()
+        
+        #BUTTON BOX
+        
+        buttonbox = gtk.HButtonBox()
+        self.vbox.pack_start(buttonbox)
+        buttonbox.show()
+        
+        remove = gtk.Button(stock=gtk.STOCK_REMOVE)
+        remove.connect("clicked", self.apply)
+        buttonbox.pack_start(remove)
+        remove.show()
+        
+        close = gtk.Button(stock=gtk.STOCK_CLOSE)
+        close.connect("clicked", lambda w: gtk.main_quit())
+        buttonbox.add(close)
+        close.show()
+        
+
+       
+class Add():
+    
+    def apply(self, widget):
+        command_to_add = self.command.get_text()
+        command_to_add = re.sub(r'\(', '\\\(', command_to_add)
+        command_to_add = re.sub(r'\)', '\\\)', command_to_add)
+        if command_to_add is "": 
+            sys.exit(Error("You need to enter a command"))
+                    
+        sleepTime_to_add = int(self.sleepTime.get_value())        
+        if sleepTime_to_add != 0:
+            prefix="sleep %s && " % (sleepTime_to_add)
+            print prefix
+        else:
+            prefix=""
+        
+        if DESKTOP == "jwm":
+            for line in open(USER_HOME+"/."+DESKTOP+"/startup", "r").xreadlines():
+                if "<StartupCommand>" in line:
+                    text = file((USER_HOME+"/."+DESKTOP+"/startup.new"), "a")
+                    text.write (line) 
+                    text.write (prefix+command_to_add+" &\n")
+                    text.close()
+                else:
+                    text = file((USER_HOME+"/."+DESKTOP+"/startup.new"), "a")
+                    text.write (line) 
+                    text.close()
+        else:
+            text = file((USER_HOME+"/."+DESKTOP+"/startup.new"), "a")
+            text.write ("#!/bin/bash\n") 
+            text.write (prefix+command_to_add+" &\n")
+            text.close()
+            for line in open(USER_HOME+"/."+DESKTOP+"/startup", "r").xreadlines():
+                if "#!/bin/bash" not in line:
+                    text = file((USER_HOME+"/."+DESKTOP+"/startup.new"), "a")
+                    text.write (line) 
+                    text.close()
+
+
+        os_system_line="mv "+USER_HOME+"/."+DESKTOP+"/startup.new "+USER_HOME+"/."+DESKTOP+"/startup && chmod 755 "+USER_HOME+"/."+DESKTOP+"/startup "
+        os.system(os_system_line)
+        Success("command has been added")
+        
+        #refresh remove drop box
+        #Remove().afterAdd()
+        Remove.updateRemoveSelect(self)
+        
+    def scale_set_default_values(self, scale):
+        scale.set_update_policy(gtk.UPDATE_CONTINUOUS)
+        scale.set_digits(0)
+        scale.set_value_pos(gtk.POS_TOP)
+        scale.set_draw_value(True)
+        
+    def __init__(self):
+        self.frame = gtk.Frame("Add Items")
+        self.frame.set_border_width(10)
+        self.frame.show()
+        
+        vbox = gtk.VBox()
+        self.frame.add(vbox)
+        vbox.show()
+        
+        label = gtk.Label()
+        label.set_text("Command")
+        vbox.pack_start(label)
+        label.show()
+        
+        self.command = gtk.Entry()
+        self.command.set_text("add-start")
+        vbox.pack_start(self.command)
+        self.command.show()
+        
+        label = gtk.Label()
+        label.set_text("Sleep Time")
+        vbox.pack_start(label)
+        label.show()
+        
+        adj1 = gtk.Adjustment(0, 0.0, 31.0, 1.0, 1.0, 1.0 )
+        self.sleepTime = gtk.HScale(adj1)
+        self.sleepTime.set_size_request(200, 30)
+        self.scale_set_default_values(self.sleepTime)
+        vbox.pack_start(self.sleepTime)
+        self.sleepTime.show()
+        
+        self.label = gtk.Label("Add")
+        self.label.show()
+        
+        #BUTTON BOX
+        
+        buttonbox = gtk.HButtonBox()
+        vbox.pack_start(buttonbox)
+        buttonbox.show()
+        
+        
+        add = gtk.Button(stock=gtk.STOCK_ADD)
+        add.connect("clicked", self.apply)
+        buttonbox.pack_start(add)
+        add.show()
+        
+        close = gtk.Button(stock=gtk.STOCK_CLOSE)
+        close.connect("clicked", lambda w: gtk.main_quit())
+        buttonbox.add(close)
+        close.show()
+        
+
+class mainWindow():
+
+    def __init__(self):
+        window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        window.set_title("add-start")
+        pixbuf = get_icon("preferences-system", 48)
+        window.set_icon(pixbuf)
+        window.connect("destroy", lambda w: gtk.main_quit())
+        
+        mainbox = gtk.VBox()
+        window.add(mainbox)
+        mainbox.show()
+        
+        label = gtk.Label()
+        label.set_text("\nChanging startup for: "+DESKTOP+"\n")
+        mainbox.pack_start(label)
+        label.show()
+        
+        table = gtk.Table(2,3,False)
+        mainbox.pack_start(table)
+        table.show() 
+        
+        self.notebook = gtk.Notebook()
+        self.notebook.set_tab_pos(gtk.POS_TOP)
+        self.notebook.set_size_request(300,200)
+        table.attach(self.notebook, 0,3,0,1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+        self.notebook.show()
+        
+        #Start Add Class
+        self.notebook.append_page(Add().frame, Add().label)
+        
+        #Start Remove Class
+        self.notebook.append_page(Remove().frame, Remove().label)
+        
+        window.show()
+
+
+if os.path.isfile(LOCATION) == (False):
+    sys.exit(Error("There is no file ~/.%s/startup \nThe session variable DESKTOP_CODE='%s' \nincorrectly matches your system" % ((DESKTOP), (DESKTOP)) ))
+mainWindow()
+gtk.main()

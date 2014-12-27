@@ -1,3 +1,10 @@
+add-start-antix (0.2.7) unstable; urgency=low
+
+  * New icon theme
+
+ -- anticapitalista <antiX@operamail.com>  Sat, 27 Dec 2014 14:14:00 +0200
+
+
 add-start-antix (0.2.6) unstable; urgency=low
 
   * Removed gtkdialog dependency

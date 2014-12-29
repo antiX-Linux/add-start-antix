@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#!/bin/bash
 # File Name: add-start
 # Dependencies: fluxbox or icewm or jwm, desktop_tool, gtk, pygtk,
 # python os mod, python re mod, python sys mod, yad
@@ -24,11 +23,14 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ################################################################################
 #################################################################
+#!/usr/bin/env python
 import gtk
 from desktop_tool import get_icon as get_icon
 import re
 import os
-import sys
+import sys 
+import gettext
+gettext.install("add-start", "/usr/share/locale")
 
 USER_HOME = os.environ['HOME']
 DISPLAY = os.environ['DISPLAY']
@@ -66,7 +68,7 @@ class Remove():
     
     def build_drop_box(self):
         self.removeSelect = gtk.combo_box_new_text()
-        self.removeSelect.append_text('No line Selected:')
+        self.removeSelect.append_text(_("No line Selected:"))
     
         for line in open(USER_HOME+"/."+DESKTOP+"/startup", "r").xreadlines():
             if "#" not in line:
@@ -103,12 +105,12 @@ class Remove():
             
         os_system_line="mv "+USER_HOME+"/."+DESKTOP+"/startup.new "+USER_HOME+"/."+DESKTOP+"/startup && chmod 755 "+USER_HOME+"/."+DESKTOP+"/startup"
         os.system(os_system_line)
-        Success("line has been removed")
+        Success(_("line has been removed"))
         self.updateRemoveSelect()
                 
     def __init__(self):
         
-        self.frame = gtk.Frame("Remove Items")
+        self.frame = gtk.Frame(_("Remove Items"))
         self.frame.set_border_width(10)
         self.frame.show()
         
@@ -117,7 +119,7 @@ class Remove():
         self.vbox.show()
         
         label = gtk.Label()
-        label.set_text("Line to Remove")
+        label.set_text(_("Line to Remove"))
         self.vbox.pack_start(label)
         label.show()
         
@@ -128,7 +130,7 @@ class Remove():
         #build drop box
         self.build_drop_box()
         
-        self.label = gtk.Label("Remove")
+        self.label = gtk.Label(_("Remove"))
         self.label.show()
         
         #BUTTON BOX
@@ -190,7 +192,7 @@ class Add():
 
         os_system_line="mv "+USER_HOME+"/."+DESKTOP+"/startup.new "+USER_HOME+"/."+DESKTOP+"/startup && chmod 755 "+USER_HOME+"/."+DESKTOP+"/startup "
         os.system(os_system_line)
-        Success("command has been added")
+        Success(_("command has been added"))
         
         #refresh remove drop box
         #Remove().afterAdd()
@@ -203,8 +205,8 @@ class Add():
         scale.set_draw_value(True)
         
     def __init__(self):
-        self.frame = gtk.Frame("Add Items")
-        self.frame.set_border_width(10)
+        self.frame = gtk.Frame(_("Add Items"))
+        self.frame.set_border_width(10) 
         self.frame.show()
         
         vbox = gtk.VBox()
@@ -222,7 +224,7 @@ class Add():
         self.command.show()
         
         label = gtk.Label()
-        label.set_text("Sleep Time")
+        label.set_text(_("Sleep Time"))
         vbox.pack_start(label)
         label.show()
         
@@ -233,7 +235,7 @@ class Add():
         vbox.pack_start(self.sleepTime)
         self.sleepTime.show()
         
-        self.label = gtk.Label("Add")
+        self.label = gtk.Label(_("Add"))
         self.label.show()
         
         #BUTTON BOX
@@ -292,6 +294,7 @@ class mainWindow():
 
 
 if os.path.isfile(LOCATION) == (False):
-    sys.exit(Error("There is no file ~/.%s/startup \nThe session variable DESKTOP_CODE='%s' \nincorrectly matches your system" % ((DESKTOP), (DESKTOP)) ))
+    sys.exit(Error(_("There is no file ~/.%s/startup \nThe session variable DESKTOP_CODE='%s' \nincorrectly matches your system" % ((DESKTOP), (DESKTOP)) )))
 mainWindow()
 gtk.main()
+

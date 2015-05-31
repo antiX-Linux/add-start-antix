@@ -1,3 +1,17 @@
+add-start-antix (0.3.0) unstable; urgency=low
+
+  * Fixed translations.
+
+ -- anticapitalista <antiX@operamail.com>  Tue, 14 Apr 2015 15:45:00 +0200
+
+
+add-start-antix (0.2.8) unstable; urgency=low
+
+  * Corrected .desktop ison path
+
+ -- anticapitalista <antiX@operamail.com>  Mon, 02 Jan 2015 18:08:00 +0200
+
+
 add-start-antix (0.2.7) unstable; urgency=low
 
   * New icon theme

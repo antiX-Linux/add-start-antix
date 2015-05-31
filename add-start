@@ -270,7 +270,7 @@ class mainWindow():
         mainbox.show()
         
         label = gtk.Label()
-        label.set_text("\nChanging startup for: "+DESKTOP+"\n")
+        label.set_text(_("Changing startup for: "+DESKTOP+"\n"))
         mainbox.pack_start(label)
         label.show()
         
@@ -297,4 +297,3 @@ if os.path.isfile(LOCATION) == (False):
     sys.exit(Error(_("There is no file ~/.%s/startup \nThe session variable DESKTOP_CODE='%s' \nincorrectly matches your system" % ((DESKTOP), (DESKTOP)) )))
 mainWindow()
 gtk.main()
-

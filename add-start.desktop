@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=add-start
 Exec=add-start
-Icon=gnome-settings-default-applications.png
+Icon=gnome-settings-default-applications
 Terminal=false
 Type=Application
 Categories=Settings;

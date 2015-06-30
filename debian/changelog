@@ -1,3 +1,18 @@
+add-start-antix (0.3.2) unstable; urgency=low
+
+  * Updated German 
+
+ -- anticapitalista <antiX@operamail.com>  Mon, 29 Jun 2015 13:55:00 +0200
+
+
+add-start-antix (0.3.1) unstable; urgency=low
+
+  * Removed pt_BR and Czech.
+  * Added Swedish, Italian, Japanese and German 
+
+ -- anticapitalista <antiX@operamail.com>  Fri, 26 Jun 2015 14:18:00 +0200
+
+
 add-start-antix (0.3.0) unstable; urgency=low
 
   * Fixed translations.

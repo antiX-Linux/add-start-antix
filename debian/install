@@ -1,4 +1,2 @@
 add-start.desktop /usr/share/applications/antix
 locale/*	    /usr/share/locale
-changelog.gz        /usr/share/doc/add-start-antix
-copyright           /usr/share/doc/add-start-antix

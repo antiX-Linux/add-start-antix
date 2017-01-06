@@ -1,3 +1,9 @@
+add-start-antix (0.3.3) unstable; urgency=medium
+
+  * Updated translations 
+
+ -- anticapitalista <antix@operamail.com>  Fri, 06 Jan 2017 23:30:51 +0200
+
 add-start-antix (0.3.2) unstable; urgency=low
 
   * Updated German 

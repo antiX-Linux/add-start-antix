@@ -1,3 +1,15 @@
+add-start-antix (0.3.6) unstable; urgency=low
+
+  * Added Czech, Slovak
+
+ -- anticapitalista <antix@operamail.com>  Sat, 01 Apr 2017 19:17:37 +0300
+
+add-start-antix (0.3.5) unstable; urgency=medium
+
+  * Fixed broken package - add-start didn't get installed to usr/local/bin
+
+ -- anticapitalista <antix@operamail.com>  Fri, 24 Mar 2017 21:33:54 +0200
+
 add-start-antix (0.3.4) unstable; urgency=medium
 
   * Updated translations 

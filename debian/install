@@ -1,2 +1,3 @@
-add-start.desktop /usr/share/applications/antix
-locale/*	    /usr/share/locale
+add-start.desktop 	usr/share/applications/antix
+locale/* 		usr/share/locale
+add-start 		usr/local/bin

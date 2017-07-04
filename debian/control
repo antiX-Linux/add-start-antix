@@ -1,9 +1,9 @@
 Source: add-start-antix
 Section: system
 Priority: optional
-Maintainer: anticapitalista <antiX@operamail.com>
+Maintainer: anticapitalista <anticapitalista@riseup.net>
 Build-Depends: debhelper (>= 9.20120115)
-Standards-Version: 3.9.4
+Standards-Version: 3.9.8
 Homepage: https://github.com/antiX-Linux/add-start-antix
 
 Package: add-start-antix

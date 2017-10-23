@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=add-start
+Name=Add Startup Commands
 Comment=
 Exec=add-start
 Icon=gnome-settings-default-applications

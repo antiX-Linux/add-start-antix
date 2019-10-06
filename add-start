@@ -46,22 +46,19 @@ LOCATION=(USER_HOME+"/."+DESKTOP+"/keys")
 
 class Error:
     def __init__(self, error):
-       cmdstring = "yad --image=\"error\"\
-       --title=\"add-start error\"\
-       --text=\"add-start has run into an error,\
-       \nplease rerun and correct the following error!\
-       \n\n%s\n\"\
-       --button=\"gtk-ok:0\"" % (error)
-       os.system(cmdstring) 
+        dlg = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, message_format=_("There is an error,\nplease rerun and correct the following error!")+"\n\n"+error)
+        dlg.set_title(_("add-start error"))
+        dlg.set_keep_above(True) # note: set_transient_for() is ineffective!
+        dlg.run()
+        dlg.destroy() 
        
 class Success:
     def __init__(self, success):
-       cmdstring = "yad --image=\"info\"\
-       --title=\"add-start success\"\
-       --text=\"add-start has successfully completed,\
-       \n\n%s\n\"\
-       --button=\"gtk-ok:0\"" % (success)
-       os.system(cmdstring) 
+        dlg = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, message_format=_("Successfully updated")+":\n\n"+success)
+        dlg.set_title(_("Successfully updated"))
+        dlg.set_keep_above(True) # note: set_transient_for() is ineffective!
+        dlg.run()
+        dlg.destroy() 
        
        
 class Remove():
